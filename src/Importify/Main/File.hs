@@ -13,15 +13,15 @@ module Importify.Main.File
 
 import Universum
 
-import Fmt (fmt, (+|), (|+))
+import Fmt ((+|), (|+))
 import Language.Haskell.Exts (Comment (..), Extension, ImportDecl, Module (..), ModuleHead,
-                              ModuleName (..), SrcSpanInfo, ann, exactPrint, parseExtension,
+                              ModuleName (..), SrcSpanInfo, parseExtension,
                               parseFileContentsWithComments)
 import Language.Haskell.Exts.Parser (ParseMode (..), defaultParseMode)
 import Language.Haskell.Names (Environment, Scoped, annotate, loadBase, readSymbols)
 import Language.Haskell.Names.Imports (annotateImportDecls, importTable)
 import Language.Haskell.Names.SyntaxUtils (getModuleName)
-import Path (Abs, Dir, File, Path, Rel, fromAbsFile, fromRelFile, parseRelDir, parseRelFile, (</>))
+import Path (Abs, File, Path, fromAbsFile, fromRelFile, parseRelDir, parseRelFile, (</>))
 import Path.IO (doesDirExist, getCurrentDir)
 
 import Extended.System.Wlog (printError, printNotice)

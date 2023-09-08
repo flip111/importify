@@ -9,9 +9,10 @@ module Importify.Cabal.Module
 import           Universum                       hiding (fromString)
 
 import           Data.List                       (partition)
-import           Distribution.ModuleName         (ModuleName, fromString, toFilePath)
+import           Distribution.ModuleName         (ModuleName, toFilePath)
 import qualified Distribution.ModuleName         as Cabal
 import           Distribution.PackageDescription (BuildInfo (..), Library (..))
+import           Distribution.Utils.Path (getSymbolicPath)
 import qualified Language.Haskell.Exts           as HSE
 import           Path                            (Abs, Dir, File, Path, Rel, parseRelDir,
                                                   parseRelFile, (</>))
@@ -37,7 +38,7 @@ modulePaths :: Path Abs Dir
             -- ^ Modules for Library and path for others
             -> IO [Path Abs File]
 modulePaths packagePath BuildInfo{..} extra = do
-    let (cur, others) = partition (== ".") hsSourceDirs
+    let (cur, others) = partition (== ".") $ map getSymbolicPath hsSourceDirs
     case (cur, others) of
         (_here,    []) -> collectModulesHere
         ([]   , paths) -> collectModulesThere paths

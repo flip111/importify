@@ -28,7 +28,6 @@ import Data.Aeson (FromJSON (parseJSON), FromJSONKey (fromJSONKey),
                    FromJSONKeyFunction (FromJSONKeyTextParser), ToJSON (toJSON),
                    ToJSONKey (toJSONKey), Value (String), object, withObject, withText, (.:), (.=))
 import Data.Aeson.Types (Parser, toJSONKeyText)
-import Data.Hashable (Hashable)
 import Distribution.ModuleName (ModuleName)
 import Distribution.PackageDescription (Benchmark (..), BenchmarkInterface (..), BuildInfo (..),
                                         CondTree, Executable (..), GenericPackageDescription (..),

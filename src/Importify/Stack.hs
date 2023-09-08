@@ -22,7 +22,7 @@ module Importify.Stack
 import Universum
 
 import Data.List (partition)
-import Data.Yaml (FromJSON (parseJSON), Parser, Value (Object), decodeEither',
+import Data.Yaml (FromJSON (parseJSON), Value (Object), decodeEither',
                   prettyPrintParseException, withObject, (.:))
 import Path (Abs, Dir, Path, PathException, dirname, fromAbsDir, mkRelDir, parent, parseAbsDir,
              (</>))
@@ -33,9 +33,12 @@ import Turtle (Line, Shell, inproc, lineToText, linesToText, need)
 import Extended.System.Wlog (printWarning)
 
 import qualified Control.Foldl as Fold (head, list)
+import qualified Data.Aeson.Key as Key
+import qualified Data.Aeson.KeyMap as KeyMap
 import qualified Data.HashMap.Strict as HM
 import qualified Data.Text as T
 import qualified Turtle (fold)
+
 
 shStack :: [Text] -> Shell Line
 shStack args = do
@@ -51,7 +54,7 @@ inNixShell = do
 pathArgs, rootArgs, depsArgs :: [Text]
 pathArgs = ["path", "--compiler-bin"]
 rootArgs = ["path", "--project-root"]
-depsArgs = ["list-dependencies", "--test", "--bench"]
+depsArgs = ["ls", "dependencies", "--test", "--bench"]
 
 -- | This function finds path to directory where @include@ for ghc lies.
 -- Filepath looks like this:
@@ -158,20 +161,20 @@ pkgName QueryPackage{..} = qpName <> "-" <> qpVersion
 
 -- | Local subpackages from exactly this project.
 newtype LocalPackages = LocalPackages [QueryPackage]
-    deriving (Eq, Monoid)
+    deriving (Eq, Semigroup, Monoid)
 
 -- | Remote packages, from GitHub or other locations.
 newtype RemotePackages = RemotePackages [QueryPackage]
-    deriving (Eq, Monoid)
+    deriving (Eq, Semigroup, Monoid)
 
 newtype StackQueryResult = StackQueryResult [(Text, (FilePath, Text))]
     deriving Show
 
 instance FromJSON StackQueryResult where
     parseJSON = withObject "stack query" $ \obj -> do
-        Just (Object locals) <- pure $ HM.lookup "locals" obj
+        Just (Object locals) <- pure $ KeyMap.lookup "locals" obj
         packages <- forM locals $ withObject "package" $ \pkgObj -> do
             pkgPath    :: FilePath <- pkgObj .: "path"
             pkgVersion :: Text     <- pkgObj .: "version"
             pure (pkgPath, pkgVersion)
-        pure $ StackQueryResult $ HM.toList packages
+        pure $ StackQueryResult $ map (\(k, v) -> (Key.toText k, v)) $ KeyMap.toList packages

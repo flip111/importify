@@ -19,7 +19,6 @@ cabal.sandbox.config
 .stack-work/
 cabal.project.local
 .HTF/
-
 *~
 .importify/
 module_backup

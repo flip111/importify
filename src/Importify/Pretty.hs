@@ -7,7 +7,6 @@ module Importify.Pretty
 
 import Universum
 
-import Control.Arrow ((&&&))
 import Data.Text (strip)
 import Language.Haskell.Exts (Comment (..), ImportDecl (..), SrcSpan (..), SrcSpanInfo (..),
                               exactPrint, startLine)

@@ -1,22 +1,20 @@
+cabal-version: 2.4
+
 name:                importify
-version:             1.0.2
-synopsis:            Tool for haskell imports refactoring
-description:         Please see README.md
-homepage:            https://github.com/serokell/importify
-bug-reports:         https://github.com/serokell/importify/issues
-license:             MIT
-license-file:        LICENSE
-author:              @serokell
-maintainer:          Serokell <hi@serokell.io>
-copyright:           2017-2018 Serokell
-category:            Development, Refactoring
-build-type:          Simple
-cabal-version:       >=1.18
-tested-with:         GHC == 8.0.1
-                   , GHC == 8.0.2
-                   , GHC == 8.2.2
-extra-doc-files:     CHANGES.md
-                   , README.md
+version:             2.0
+-- synopsis:            Tool for haskell imports refactoring
+-- description:         Please see README.md
+-- homepage:            https://github.com/serokell/importify
+-- bug-reports:         https://github.com/serokell/importify/issues
+-- license:             MIT
+-- license-file:        LICENSE
+-- author:              @serokell
+-- maintainer:          Serokell <hi@serokell.io>
+-- copyright:           2017-2018 Serokell
+-- category:            Development, Refactoring
+-- build-type:          Simple
+-- extra-doc-files:     CHANGES.md
+--                    , README.md
 
 source-repository head
   type:     git
@@ -58,7 +56,7 @@ library
                        Extended.Data.Str
                        Extended.Lens.TH
 
-  build-depends:       base >= 4.7 && < 5
+  build-depends:       base
                      , aeson
                      , aeson-pretty
                      , autoexporter
@@ -72,7 +70,7 @@ library
                      , haskell-names
                      , haskell-src-exts
                      , hse-cpp
-                     , log-warper >= 1.8.2
+                     , log-warper
                      , microlens-platform
                      , path
                      , path-io
@@ -82,7 +80,7 @@ library
                      , text
                      , text-format
                      , turtle
-                     , universum >= 1.0.0
+                     , universum
                      , unordered-containers
                      , yaml
 
@@ -106,9 +104,9 @@ executable importify
   other-modules:       Options
 
   build-depends:       base, importify
-                     , log-warper >= 1.8.2
+                     , log-warper
                      , optparse-applicative
-                     , universum >= 1.0.0
+                     , universum
 
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
 
@@ -130,7 +128,7 @@ executable golden-generator
                      , text
                      , path
                      , path-io
-                     , universum >= 1.0.0
+                     , universum
 
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
 
@@ -152,11 +150,11 @@ test-suite importify-test
   build-depends:       base, importify
                      , filepath
                      , hspec
-                     , log-warper >= 1.8.2
+                     , log-warper
                      , microlens-platform
                      , path
                      , path-io
-                     , universum >= 1.0.0
+                     , universum
                      , unordered-containers
 
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall

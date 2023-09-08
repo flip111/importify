@@ -17,15 +17,15 @@ import           Distribution.PackageDescription       (Benchmark (benchmarkBuil
                                                         Library (..),
                                                         TestSuite (testBuildInfo),
                                                         condTreeData)
-import           Distribution.PackageDescription.Parse (readPackageDescription)
+import           Distribution.Simple.PackageDescription (readGenericPackageDescription)
 import           Distribution.Verbosity                (normal)
 
 -- | Parse 'GenericPackageDescription' from given path to .cabal file.
 readCabal :: MonadIO m => FilePath -> m GenericPackageDescription
-readCabal = liftIO . readPackageDescription normal
+readCabal = liftIO . readGenericPackageDescription normal
 
 dependencyName :: Dependency -> String
-dependencyName (Dependency name _) = unPackageName name
+dependencyName (Dependency name _ _) = unPackageName name
 
 -- | Retrieve list of unique names for all package dependencies inside
 -- library, all executables, all test suites and all benchmarks for a

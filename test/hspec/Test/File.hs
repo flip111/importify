@@ -8,12 +8,10 @@ module Test.File
 
 import           Universum
 
-import           Data.List      (sort)
 import           Path           (Abs, Dir, File, Path, Rel, dirname, fileExtension,
                                  filename, fromRelDir, fromRelFile, fromAbsFile, mkRelFile,
                                  (-<.>), (</>))
 import           Path.IO        (listDir)
-import           System.Wlog    (Severity)
 
 import           Test.Hspec     (Spec, describe, it, runIO, shouldBe, xit)
 
@@ -31,10 +29,14 @@ makeTestGroup :: Path Rel Dir -> Spec
 makeTestGroup testCasesPath = do
     (_, testDirPaths) <- runIO $ listDir testCasesPath
     let testHsOnly     = sort
-                       $ filter ((== ".hs") . fileExtension) testDirPaths
+                       $ filter ((== ".hs") . fe) testDirPaths
 
     describe ("subfolder: " ++ fromRelDir (dirname testCasesPath)) $
         mapM_ makeTest testHsOnly
+  where fe :: Path b File -> String
+        fe filepath = case fileExtension filepath of
+          Nothing -> error "this is not supposed to happen"
+          Just fp -> fp
 
 makeTest :: Path Abs File -> Spec
 makeTest testCasePath = do

@@ -11,7 +11,7 @@ module Importify.Main.Cache
        , importifyCacheProject
        ) where
 
-import           Universum
+import           Universum hiding (view)
 
 import           Data.Aeson.Encode.Pretty        (encodePretty)
 import qualified Data.ByteString.Lazy            as LBS (writeFile)
@@ -22,7 +22,7 @@ import           Distribution.PackageDescription (BuildInfo (includeDirs),
 import           Fmt                             (listF, (+|), (+||), (|+), (||+))
 import           Language.Haskell.Exts           (Module, ModuleName (..), SrcSpanInfo)
 import           Language.Haskell.Names          (writeSymbols)
-import           Lens.Micro.Platform             (to)
+import           Lens.Micro.Platform             (to, view)
 import           Path                            (Abs, Dir, File, Path, fromAbsDir,
                                                   fromAbsFile, parseAbsFile, parseRelDir,
                                                   parseRelFile, (</>))
@@ -64,7 +64,7 @@ importifyCacheList explicitDependencies = do
     printInfo "Using explicitly specified list of dependencies for caching..."
     importifyPath <- view pathToImportify
     doInsideDir importifyPath $
-        () <$ cacheDependenciesWith identity
+        () <$ cacheDependenciesWith id
                                     unpackCacher
                                     (toList explicitDependencies)
 
@@ -91,7 +91,7 @@ cacheProject (LocalPackages locals) (RemotePackages remotes) = do
         -- 1. Unpack hackage dependencies then cache them
         printInfo $ "Caching total "+|length hackageDependencies|+
                     " dependencies from Hackage: "+|listF hackageDependencies|+""
-        hackageMaps <- cacheDependenciesWith identity
+        hackageMaps <- cacheDependenciesWith id
                                              unpackCacher
                                              hackageDependencies
 
@@ -113,9 +113,12 @@ cacheProject (LocalPackages locals) (RemotePackages remotes) = do
 
 localPackageDescription :: MonadIO m => QueryPackage -> m GenericPackageDescription
 localPackageDescription QueryPackage{..} = do
-    Just cabalPath <- findCabalFile qpPath
-    let cabalFile   = fromAbsFile cabalPath
-    readCabal cabalFile
+    cabalPath <- findCabalFile qpPath
+    case cabalPath of
+      Nothing -> error "This not supposed to happen"
+      Just cb -> do
+        let cabalFile   = fromAbsFile cb
+        readCabal cabalFile
 
 extractHackageDependencies :: MonadIO m
                            => [GenericPackageDescription]
@@ -286,8 +289,8 @@ parseTargetModules packagePath pathsToModules targetInfo = do
     includeDirPaths   <- mapM parseRelDir $ includeDirs targetInfo
     let pkgIncludeDirs = map (fromAbsDir . (packagePath </>)) includeDirPaths
 
-    ghcDir <- view ghcIncludeDir
-    let includeDirs = pkgIncludeDirs ++ toList (fmap fromAbsDir ghcDir)
+    ghcDir :: Maybe (Path Abs Dir) <- view ghcIncludeDir
+    let includeDirs = pkgIncludeDirs <> (maybeToList $ fmap fromAbsDir ghcDir)
     let extensions  = withHarmlessExtensions $ buildInfoExtensions targetInfo
 
     let moduleParser path = do

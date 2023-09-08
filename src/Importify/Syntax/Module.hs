@@ -33,7 +33,7 @@ getSourceModuleName src =
 
 -- | Get name of module by dropping annonation.
 getModuleNameId :: ModuleName l -> String
-getModuleNameId (ModuleName _ id) = id
+getModuleNameId (ModuleName _ module_id) = module_id
 
 -- | Returns name of 'Module' as a 'String'.
 getModuleTitle :: Module l -> String

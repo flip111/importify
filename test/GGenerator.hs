@@ -4,7 +4,7 @@
 
 -- | This executable generated .golden tests for importify.
 
-module Main where
+module Main (main) where
 
 import           Universum
 
@@ -13,6 +13,7 @@ import           Path.IO        (listDirRecur, removeFile)
 
 import           Importify.Main (importifyFileContent)
 import           Importify.Path (testDataPath)
+import           System.Environment (getArgs)
 
 main :: IO ()
 main = do
@@ -24,8 +25,12 @@ main = do
         _           -> putText "Incorrect arguments!"
 
 findByExtension :: MonadIO m => String -> Path b Dir -> m [Path Abs File]
-findByExtension ext path = filter ((== ext) . fileExtension) . snd
+findByExtension ext path = filter ((== ext) . fe) . snd
                           <$> listDirRecur path
+  where fe :: Path b File -> String
+        fe filepath = case fileExtension filepath of
+          Nothing -> error "this is not supposed to happen"
+          Just fp -> fp
 
 findGoldenFiles :: MonadIO m => Path b Dir -> m [Path Abs File]
 findGoldenFiles = findByExtension "golden"

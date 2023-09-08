@@ -7,7 +7,7 @@
       3. Print new modified version of file with imports changed.
  -}
 
-module Main where
+module Main (main) where
 
 import Universum
 

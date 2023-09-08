@@ -22,7 +22,8 @@ import Path.IO (removeFile)
 import Importify.ParseException (ModuleParseException (MPE), eitherParseResult)
 import Importify.Syntax (modulePragmas)
 
-import qualified Autoexporter (mainWithArgs)
+import System.Environment (setEnv)
+import qualified Autoexporter (autoexporter)
 
 -- | Parse module after preproccessing this module with possibly
 -- custom preprocessor. It first calls parsing with CPP, then reads
@@ -44,7 +45,9 @@ parseModuleWithPreprocessor extensions includeFiles pathToModule =
           let modulePath       = fromAbsFile pathToModule
           outputFilePath      <- pathToModule -<.> ".auto"
           let preprocessorArgs = [modulePath, modulePath, fromAbsFile outputFilePath]
-          Autoexporter.mainWithArgs (preprocessorArgs ++ autoArgs)
+          let args = preprocessorArgs <> autoArgs
+          for_ args $ \arg -> setEnv "bla" arg
+          Autoexporter.autoexporter
           parseModuleAfterCPP extensions includeFiles outputFilePath
             <* removeFile outputFilePath
   where

@@ -3,7 +3,7 @@ module Main where
 import Universum
 
 import Data.List (partition)
-import System.Environment (withArgs)
+import System.Environment (withArgs, getArgs)
 import System.Wlog (infoPlus)
 
 import Test.Hspec (hspec)

@@ -8,7 +8,6 @@ module Importify.Cabal.Extension
 
 import           Universum
 
-import qualified Distribution.ModuleName         as Cabal
 import           Distribution.PackageDescription (BuildInfo (..))
 import qualified Language.Haskell.Extension      as Cabal (Extension (..))
 import           Language.Haskell.Exts.Extension (Extension (..), KnownExtension (..))
@@ -21,7 +20,7 @@ buildInfoExtensions BuildInfo{..} = mapMaybe cabalExtToHseExt
                                   $ defaultExtensions ++ otherExtensions
 
 cabalExtToHseExt :: Cabal.Extension -> Maybe Extension
-cabalExtToHseExt = readMaybe . show
+cabalExtToHseExt ext = readMaybe (show ext :: Text)
 
 {-
 showExt :: Cabal.Extension -> String
